@@ -13,7 +13,7 @@ const overlays=[['ctxUrban','Context · Urban population'],['ctxGdp','Context ·
 const O={ctxUrban:['SP.URB.TOTL.IN.ZS',100,'%'],ctxGdp:['NY.GDP.PCAP.CD',25000,'USD'],ctxPop:['SP.POP.TOTL',220000000,'residents']};
 const ranges=[['2015–2018',2015,2018],['2010–2014',2010,2014],['2005–2009',2005,2009],['2000–2004',2000,2004],['1995–1999',1995,1999],['1990–1994',1990,1994]];
 let db,geo,ctx;
-try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json()})));}
+try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json();})));}
 catch(e){$('summary').textContent='Election data did not load. Try reloading the page.';return;}
 const sorted=Object.keys(db).sort((a,b)=>db[a].name.localeCompare(db[b].name));
 let mode, country, metric, region, windowId, electionId, district, localParty;

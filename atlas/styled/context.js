@@ -7,8 +7,14 @@ const stat=(v,n)=>'<div class="ctx-stat"><strong>'+esc(v)+'</strong><span>'+esc(
 const grid=xs=>'<div class="ctx-grid">'+xs.map(([v,n])=>stat(v,n)).join('')+'</div>';
 const card=(name,body)=>'<section class="context-card"><h3>'+esc(name)+'</h3>'+body+'</section>';
 const breakdown=(xs=[])=>'<ul class="ctx-breakdown">'+xs.filter(x=>Number.isFinite(x.sharePct)).map(({name,sharePct})=>'<li><span>'+esc(name)+'</span><strong>'+pct(sharePct)+'</strong><span aria-hidden="true" class="ctx-track"><i style="width:'+Math.min(100,Math.max(0,sharePct))+'%"></i></span></li>').join('')+'</ul>';
-const sourceLink=s=>s?.url?'<a href="'+esc(s.url)+'">'+esc(s.label)+'</a>':'';
-const data=()=>window._atlasContextPromise??=fetch('context-data.json').then(r=>{if(!r.ok)throw Error(r.status);return r.json()});
+const sourceLink=s=>{
+ if(!s?.url)return '';
+ try {
+  const u=new URL(s.url);
+  return u.protocol==='https:'&&!u.username&&!u.password?'<a href="'+esc(u.href)+'">'+esc(s.label)+'</a>':esc(s.label);
+ }catch(_){return esc(s.label);}
+};
+const data=()=>window._atlasContextPromise??=fetch('context-data.json').then(r=>{if(!r.ok)throw Error(r.status);return r.json();});
 function demographic(d,heading){
  if(!d)return '';
  const s=[['total','Residents'],['female','Female'],['male','Male']].filter(([k])=>Number.isFinite(d[k])).map(([k,l])=>[num(d[k]),l]);

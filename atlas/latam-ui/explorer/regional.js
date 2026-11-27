@@ -16,7 +16,7 @@ const metrics=()=>mode==='context'?overlays:specs[mode];
 const metricLabel=()=>metrics().find(([key])=>key===metric)?.[1]||'Map metric';
 const ranges=[['2015–2018',2015,2018],['2010–2014',2010,2014],['2005–2009',2005,2009],['2000–2004',2000,2004],['1995–1999',1995,1999],['1990–1994',1990,1994]];
 let db,geo,ctx;
-try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json()})));}
+try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json();})));}
 catch(e){$('summary').textContent='Election data did not load. Try reloading the page.';return;}
 const sorted=Object.keys(db).sort((a,b)=>db[a].name.localeCompare(db[b].name));
 let mode, country, metric, region, windowId, electionId, district, localParty;
@@ -30,7 +30,7 @@ const regions = [
 const regionKey=Object.fromEntries([['both',''],...regions.map(([short,name])=>[name,short])]);
 const regionName=Object.fromEntries(regions.map(([short,name])=>[short,name]));
 const displayRegion = r => regions.find(x=>x[1]===r)?.[2] || 'All regions';
-const countryUrl = code => '/countries/' + code.toLowerCase();
+const countryUrl = code => '/countries/' + encodeURIComponent(code.toLowerCase());
 const sourceLink = (name, url) => {
  const label=esc(name||'Source');
  if(typeof url!=='string')return label;
@@ -72,7 +72,7 @@ function crumbs(){
  const r=country&&region==='both'?db[country].region:region;
  const level=r!=='both'&&r!=='Mexico'?'<button type="button" data-region="'+esc(r)+'">'+esc(displayRegion(r))+'</button>':'';
  const e=country?selected():null, area=mode==='leg'&&e?.areas[district];
- const nation=country?(area?'<button type="button" data-country="'+country+'">'+esc(db[country].name)+'</button>':'<span aria-current="page">'+esc(db[country].name)+'</span>'):'';
+ const nation=country?(area?'<button type="button" data-country="'+esc(country)+'">'+esc(db[country].name)+'</button>':'<span aria-current="page">'+esc(db[country].name)+'</span>'):'';
  $('atlas-trail').innerHTML=clear+level+nation+(area?'<span aria-current="page">'+esc(area[0])+'</span>':'');
 }
 const countries=()=>sorted.filter(k=>region==='both'||db[k].region===region);
@@ -197,7 +197,7 @@ function map(){
   const spoken=active?db[k].name+', '+(Number.isFinite(v)?(e&&!O[metric]?e.year+', ':'')+vfmt(v):'no data'):'';
   const t=active?' class="province '+(k===country?'selected':'')+'"':'';
   const shape='<path fill-rule="evenodd" d="'+g.d+'" fill="'+(active?fill(v):'#c9d3d7')+'" stroke="#e9eff0" stroke-width=".55" vector-effect="non-scaling-stroke"'+t+'></path>';
-  return active?'<a href="'+countryUrl(k)+'" class="map-country-link" data-country="'+k+'" tabindex="0" aria-label="'+esc('Open '+db[k].name+' election history; '+spoken)+'"'+(k===country?' aria-current="true"':'')+'><title>'+esc(spoken)+'</title>'+shape+'</a>':shape;
+  return active?'<a href="'+countryUrl(k)+'" class="map-country-link" data-country="'+esc(k)+'" tabindex="0" aria-label="'+esc('Open '+db[k].name+' election history; '+spoken)+'"'+(k===country?' aria-current="true"':'')+'><title>'+esc(spoken)+'</title>'+shape+'</a>':shape;
  }).join('')+($('physical').checked?'<g aria-hidden="true" pointer-events="none">'+geo.rivers.map(d=>'<path d="'+d+'" stroke="#205c81" stroke-opacity=".52" stroke-width=".85" vector-effect="non-scaling-stroke" fill="none"/>').join('')+geo.terrain.filter(x=>physicalFor[region]?.has(x[0])).map(([n,x,y])=>'<text class="terrain-label" x="'+x+'" y="'+y+'" text-anchor="middle">'+esc(n)+'</text>').join('')+'</g>':'')+($('names').checked?labelsForMap(keys):'');
  legend();
 }
@@ -367,7 +367,7 @@ function render(){
 }
 function resetSelection(){electionId='';district=-1;localParty='';}
 function setRegion(value){camera=null;region=value;country=value==='Mexico'?'MEX':'';resetSelection();writeState(true);render();}
-function setCountry(value){if(country!==value)camera=null;country=value; if(country)region=db[country].region;resetSelection();writeState(true);render();}
+function setCountry(value){if(country!==value)camera=null;country=Object.hasOwn(db,value)?value:''; if(country)region=db[country].region;resetSelection();writeState(true);render();}
 function setMode(value){mode=value;windowId='0';metric=specs[mode][0][0];resetSelection();writeState(true);render();}
 function moveFocus(target){
  target?.focus({preventScroll:true});

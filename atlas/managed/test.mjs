@@ -21,13 +21,13 @@ try{
  let started=false;
  for(let i=0;i<35;i++){
   if(dev.exitCode!==null)throw Error('Cloudflare local runtime exited before tests.');
-  try{if((await fetch(base+'/',{signal:AbortSignal.timeout(1000)})).ok){started=true;break;}}catch{}
+  try{if((await fetch(base+'/',{signal:AbortSignal.timeout(1000)})).ok){started=true;break;}}catch{/* The worker can refuse connections while starting. */}
   await new Promise(r=>setTimeout(r,250));
  }
  if(!started)throw Error('Cloudflare local runtime did not start.');
  const [code]=await once(run(process.execPath,[tests],{env:{...process.env,ATLAS_TEST_URL:base}}),'exit');
  process.exitCode=code??1;
 } finally {
- try{process.kill(-dev.pid,'SIGTERM');}catch{}
+ try{process.kill(-dev.pid,'SIGTERM');}catch{/* The process may have already exited. */}
  await rm(scratch,{recursive:true,force:true});
 }

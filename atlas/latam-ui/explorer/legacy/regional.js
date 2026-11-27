@@ -16,7 +16,7 @@ const metrics=()=>mode==='context'?overlays:specs[mode];
 const metricLabel=()=>metrics().find(([key])=>key===metric)?.[1]||'Map metric';
 const ranges=[['2015–2018',2015,2018],['2010–2014',2010,2014],['2005–2009',2005,2009],['2000–2004',2000,2004],['1995–1999',1995,1999],['1990–1994',1990,1994]];
 let db,geo,ctx;
-try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json()})));}
+try{[db,geo,ctx]=await Promise.all(['regional-votes','regional-geography','regional-context'].map(n=>fetch(n+'.json').then(r=>{if(!r.ok)throw Error(n);return r.json();})));}
 catch(e){$('summary').textContent='Election data did not load. Try reloading the page.';return;}
 const sorted=Object.keys(db).sort((a,b)=>db[a].name.localeCompare(db[b].name));
 let mode, country, metric, region, windowId, electionId, district, localParty;
@@ -71,7 +71,7 @@ function crumbs(){
  const r=country&&region==='both'?db[country].region:region;
  const level=r!=='both'&&r!=='Mexico'?'<button type="button" data-region="'+esc(r)+'">'+esc(displayRegion(r))+'</button>':'';
  const e=country?selected():null, area=mode==='leg'&&e?.areas[district];
- const nation=country?(area?'<button type="button" data-country="'+country+'">'+esc(db[country].name)+'</button>':'<span aria-current="page">'+esc(db[country].name)+'</span>'):'';
+ const nation=country?(area?'<button type="button" data-country="'+esc(country)+'">'+esc(db[country].name)+'</button>':'<span aria-current="page">'+esc(db[country].name)+'</span>'):'';
  $('atlas-trail').innerHTML=clear+level+nation+(area?'<span aria-current="page">'+esc(area[0])+'</span>':'');
 }
 const countries=()=>sorted.filter(k=>region==='both'||db[k].region===region);
@@ -194,7 +194,7 @@ function map(){
  svg.innerHTML=def+Object.entries(geo.countries).sort(([k],[j])=>Number(k===country)-Number(j===country)).map(([k,g])=>{
   const active=keys.has(k), e=active?pick(k):null, v=active?value(k,e):null;
   const spoken=active?db[k].name+', '+(Number.isFinite(v)?(e&&!O[metric]?e.year+', ':'')+vfmt(v):'no data'):'';
-  const t=active?' data-country="'+k+'" class="province '+(k===country?'selected':'')+'" tabindex="0" role="button" aria-pressed="'+(k===country)+'" aria-label="'+esc(spoken)+'"':'';
+  const t=active?' data-country="'+esc(k)+'" class="province '+(k===country?'selected':'')+'" tabindex="0" role="button" aria-pressed="'+(k===country)+'" aria-label="'+esc(spoken)+'"':'';
   return '<path fill-rule="evenodd" d="'+g.d+'" fill="'+(active?fill(v):'#c9d3d7')+'" stroke="#e9eff0" stroke-width=".55" vector-effect="non-scaling-stroke"'+t+'>'+(active?'<title>'+esc(spoken)+'</title>':'')+'</path>';
  }).join('')+($('physical').checked?'<g aria-hidden="true" pointer-events="none">'+geo.rivers.map(d=>'<path d="'+d+'" stroke="#205c81" stroke-opacity=".52" stroke-width=".85" vector-effect="non-scaling-stroke" fill="none"/>').join('')+geo.terrain.filter(x=>physicalFor[region]?.has(x[0])).map(([n,x,y])=>'<text class="terrain-label" x="'+x+'" y="'+y+'" text-anchor="middle">'+esc(n)+'</text>').join('')+'</g>':'')+($('names').checked?labelsForMap(keys):'');
  legend();
@@ -276,7 +276,7 @@ function details(){
   const measures=countries().map(k=>[k,value(k,pick(k)),O[metric]?2023:pick(k)?.year]);
   const list=region==='both'?measures.filter(([,v])=>Number.isFinite(v)).sort((a,b)=>b[1]-a[1]).slice(0,5):measures;
   $('details').innerHTML='<p class="eyebrow">Country profiles</p><h2>'+esc(region==='both'?'Explore the region':displayRegion(region))+'</h2><p class="explorer-data-note">Select a country on the map or from the list to see its results and available local data.</p>'+
-   (list.length?'<ul class="explorer-country-index">'+list.map(([k,v,year])=>'<li><button type="button" data-country="'+k+'"><span>'+esc(db[k].name)+(Number.isFinite(v)&&year?'<small class="explorer-index-year">'+year+'</small>':'')+'</span><span>'+esc(Number.isFinite(v)?vfmt(v):'No data')+'</span></button></li>').join('')+'</ul>':'')+
+   (list.length?'<ul class="explorer-country-index">'+list.map(([k,v,year])=>'<li><button type="button" data-country="'+esc(k)+'"><span>'+esc(db[k].name)+(Number.isFinite(v)&&year?'<small class="explorer-index-year">'+year+'</small>':'')+'</span><span>'+esc(Number.isFinite(v)?vfmt(v):'No data')+'</span></button></li>').join('')+'</ul>':'')+
    '<p class="explorer-data-note">'+(region==='both'?'Showing the highest values for the current layer. <a href="#compare">Compare all 23 countries</a>.':'<a href="#compare">Compare countries in this region</a>.')+'</p><p class="explorer-data-note"><a href="/countries">Browse country profiles and voting history</a></p>';
   return;
  }
@@ -350,7 +350,7 @@ function districtTable(){
 }
 function compare(){
  const a=countries().map(k=>[k,pick(k),value(k,pick(k))]).sort((a,b)=>(b[2]??-Infinity)-(a[2]??-Infinity));
- const rows=a.map(([k,e,v])=>'<tr class="'+(country===k?'active-row':'')+'"><td><button type="button" data-country="'+k+'">'+esc(db[k].name)+'</button></td><td>'+(O[metric]?'2023':e?e.year:'—')+'</td><td>'+vfmt(v)+'</td></tr>').join('');
+ const rows=a.map(([k,e,v])=>'<tr class="'+(country===k?'active-row':'')+'"><td><button type="button" data-country="'+esc(k)+'">'+esc(db[k].name)+'</button></td><td>'+(O[metric]?'2023':e?e.year:'—')+'</td><td>'+vfmt(v)+'</td></tr>').join('');
  const m=metricLabel();
  $('compare').innerHTML='<div class="rank-head"><h2>Compare countries</h2><button id="csv" type="button">Download this view</button></div><p class="muted regional-mini">'+(O[metric]?'2023 country context from World Bank WDI.':'Countries without a result for the selected window or metric remain unshaded.')+'</p><div class="table-wrap"><table><thead><tr><th scope="col">Country</th><th scope="col">Year</th><th scope="col">'+esc(m)+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
  $('csv').onclick=()=>{const q=x=>'"'+String(x??'').replaceAll('"','""')+'"';const terms=[['Country','Year',m],...a.map(([k,e,v])=>[db[k].name,O[metric]?2023:e?.year,v])];const url=URL.createObjectURL(new Blob([terms.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv'}));const l=document.createElement('a');l.href=url;l.download='latin-america-voting-view.csv';l.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
@@ -362,7 +362,7 @@ function render(){
 }
 function resetSelection(){electionId='';district=-1;localParty='';}
 function setRegion(value){camera=null;region=value;country=value==='Mexico'?'MEX':'';resetSelection();writeState(true);render();}
-function setCountry(value){if(country!==value)camera=null;country=value; if(country)region=db[country].region;resetSelection();writeState(true);render();}
+function setCountry(value){if(country!==value)camera=null;country=Object.hasOwn(db,value)?value:''; if(country)region=db[country].region;resetSelection();writeState(true);render();}
 function setMode(value){mode=value;windowId='0';metric=specs[mode][0][0];resetSelection();writeState(true);render();}
 function moveFocus(target){
  target?.focus({preventScroll:true});

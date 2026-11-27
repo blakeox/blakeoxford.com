@@ -1,7 +1,7 @@
 'use strict';
 (async()=>{
  const $=id=>document.getElementById(id), A=window.AtlasContext, qs=new URLSearchParams(location.search);
- const load=async f=>{const r=await fetch(f+'.json');if(!r.ok)throw Error(r.status);return r.json()};
+ const load=async f=>{const r=await fetch(f+'.json');if(!r.ok)throw Error(r.status);return r.json();};
  const optional=f=>load(f).catch(()=>null);
  const [geo,data,support,trade]=await Promise.all(['south-geography','south-data','south-support','south-trade'].map((f,i)=>i<2?load(f):optional(f)));
  const sovereign=geo.countries.filter(c=>c.capital).sort((a,b)=>a.name.localeCompare(b.name));
@@ -45,7 +45,7 @@
  metric.value=Array.from(metric.options).some(o=>o.value===qs.get('metric'))?qs.get('metric'):'population';
  for(const row of rows)country.add(new Option(row.name,row.id));
  let id=ids.has(qs.get('d'))?qs.get('d'):'ARG';
- const el=(type,attrs={},root=svg)=>{const n=document.createElementNS(ns,type);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);root.append(n);return n};
+ const el=(type,attrs={},root=svg)=>{const n=document.createElementNS(ns,type);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);root.append(n);return n;};
  svg.setAttribute('viewBox','0 0 '+geo.w+' '+geo.h);
  const defs=el('defs'),clip=el('clipPath',{id:'south-land'},defs);
  for(const a of geo.countries)el('path',{d:a.path,'clip-rule':'evenodd'},clip);
@@ -53,7 +53,7 @@
  for(const c of geo.countries){
   const sovereign=ids.has(c.id),shape=el('path',{d:c.path,'fill-rule':'evenodd',class:'province',fill:absent});
   const t=el('title',{},shape);t.textContent=c.name;
-  if(sovereign){shape.setAttribute('role','button');shape.setAttribute('tabindex','0');shape.onclick=()=>pick(c.id);shape.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(c.id)}};}
+  if(sovereign){shape.setAttribute('role','button');shape.setAttribute('tabindex','0');shape.onclick=()=>pick(c.id);shape.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(c.id);}};}
   else shape.style.cursor='default';
   paths.push([c,shape,t]);
  }
@@ -83,7 +83,7 @@
       (p.support?.sourceMethod?' Source method: '+p.support.sourceMethod+'.':''));
    const transfer=Number.isFinite(p.subsidiesTransfersPct)?card('Budget classification · '+yr,[[A.pct(p.subsidiesTransfersPct),'Subsidies and other transfers as share of central-government expense']],'Broader than subsidies and reported separately; do not add it to the fossil fuel measure.'):'';
    const capital=p.id==='BOL'?'Sucre (constitutional); La Paz (seat of government)':pgeo.capital;
-   return '<p class="eyebrow">Country profile</p><h2>'+A.esc(pgeo.name)+'</h2><p>Capital: '+A.esc(capital)+'</p>'+(p.id==='ARG'?'<a class="context-link" href="context.html">Explore Argentina by province</a> <a class="context-link" href="./">Open the 2023 election map</a>':'')+general+exports+aid+transfer;
+   return '<p class="eyebrow">Country profile</p><h2>'+A.esc(pgeo.name)+'</h2><p>Capital: '+A.esc(capital)+'</p>'+(p.id==='ARG'?'<a class="context-link" href="context.html">Explore Argentina by province</a> <a class="context-link" href="/argentina">Open the 2023 election map</a>':'')+general+exports+aid+transfer;
  }
  const sourceLink=(u,n)=>u?'<a href="'+A.esc(u)+'">'+A.esc(n)+'</a>':'';
  const sourceFor=(obj)=>typeof obj?.source==='string'?obj.source:obj?.source?.url;
@@ -112,9 +112,9 @@
  }
  country.onchange=()=>pick(country.value);metric.onchange=render;
  for(const b of Object.values(overlays))b.onchange=render;
- $('ctx-ranking').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pick(b.dataset.p);$('ctx-ranking').querySelector('[data-p="'+b.dataset.p+'"]')?.focus({preventScroll:true});$('ctx-details').scrollIntoView({block:'nearest'})}};
+ $('ctx-ranking').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pick(b.dataset.p);$('ctx-ranking').querySelector('[data-p="'+b.dataset.p+'"]')?.focus({preventScroll:true});$('ctx-details').scrollIntoView({block:'nearest'});}};
  const csvQuote=x=>'"'+String(x??'').replace(/"/g,'""')+'"';
  const cols=Object.values(modes), csv=[['ISO3','Country',...cols.map(c=>c[0])],...rows.map(r=>[r.id,r.name,...cols.map(c=>c[1](r))])].map(row=>row.map(csvQuote).join(',')).join('\n');
  $('ctx-csv').href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  render();
-})().catch(e=>{document.getElementById('ctx-status').textContent='Country data could not load. Refresh to retry.';console.error(e)});
+})().catch(e=>{document.getElementById('ctx-status').textContent='Country data could not load. Refresh to retry.';console.error(e);});

@@ -44,7 +44,7 @@ const normalize=s=>String(s).normalize('NFD').replace(/\p{Diacritic}/gu,'').trim
 const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const round=n=>Number(n.toFixed(4));
 const valid=(votes,total)=>total>0?round(100*votes/total):null;
-const page=(rows,a)=>{const offset=a.offset??0,limit=a.limit??15;return {total:rows.length,offset,nextOffset:offset+limit<rows.length?offset+limit:null,items:rows.slice(offset,offset+limit)}};
+const page=(rows,a)=>{const offset=a.offset??0,limit=a.limit??15;return {total:rows.length,offset,nextOffset:offset+limit<rows.length?offset+limit:null,items:rows.slice(offset,offset+limit)};};
 function schema(s) {
  let out;
  if(s.type==='string'){
@@ -64,7 +64,7 @@ const tools=DEFS.map(({name,inputSchema,...definition})=>{
  return {name,definition:{...definition,inputSchema:z.strictObject(Object.fromEntries(Object.entries(properties).map(([key,value])=>[key,required.includes(key)?schema(value):schema(value).optional()])))}};
 });
 class Input extends Error {}
-const problem=(msg)=>{throw new Input(msg)};
+const problem=(msg)=>{throw new Input(msg);};
 const cand=['Javier Milei','Sergio Massa','Patricia Bullrich','Juan Schiaretti','Myriam Bregman'];
 const localRounds=(a,b)=>Object.fromEntries([['first',a],['runoff',b]].map(([k,row])=>{
  if(!row)return [k,null];
@@ -103,8 +103,8 @@ async function runTool(name,a,load){
   const base={year:2023,sources:[SR.argentina],caveats:['Candidate share uses reported candidate votes, excluding blank/invalid and other non-candidate ballots. Provisional subnational totals can differ from certified national figures.','Circuits are electoral geographies, not street blocks. Missing mapped boundaries do not imply missing votes.',disclaimer]};
   if(!p){
    const csv=await load('results.csv',true);
-   const byName=new Map(csv.trim().split(/\r?\n/).slice(1).map(l=>{const [n,...v]=l.split(',');return [n,v.map(Number)]}));
-   const rows=idx.map(z=>{const v=byName.get(z.n);return {id:z.id,name:z.n,sectionCount:z.s,circuitCount:z.c,results:v?localRounds(v.slice(0,7),v.slice(7)):null,atlas:localUrl(z.id)}});
+   const byName=new Map(csv.trim().split(/\r?\n/).slice(1).map(l=>{const [n,...v]=l.split(',');return [n,v.map(Number)];}));
+   const rows=idx.map(z=>{const v=byName.get(z.n);return {id:z.id,name:z.n,sectionCount:z.s,circuitCount:z.c,results:v?localRounds(v.slice(0,7),v.slice(7)):null,atlas:localUrl(z.id)};});
    return {...base,level:'province',...page(arrRank(rows,a),a)};
   }
   const d=await load('local/'+p.id+'.json'), s=a.section_id?d.s.find(x=>x.id===a.section_id):null;

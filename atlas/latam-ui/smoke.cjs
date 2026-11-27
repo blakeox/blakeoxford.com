@@ -52,4 +52,4 @@ const url = process.argv[2] || 'http://127.0.0.1:8262';
    await p.close();
   }
  } finally {await browser.close();}
-})().catch(e=>{console.error(e);process.exit(1)});
+})().catch(e=>{console.error(e);process.exit(1);});

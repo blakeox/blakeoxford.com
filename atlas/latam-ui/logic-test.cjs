@@ -51,4 +51,4 @@ async function get(query) {
  assert.match(el.summary.textContent,/of 12 countries/);
  assert.match(el.map.innerHTML,/data-country="ARG"/);
  console.log('All region and country-rendering assertions passed.');
-})().catch(e=>{console.error(e);process.exit(1)});
+})().catch(e=>{console.error(e);process.exit(1);});

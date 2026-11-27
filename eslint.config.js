@@ -122,6 +122,68 @@ export default [
     },
   },
 
+  // Atlas is a separate Workers app with browser, worker, and Node entry points.
+  {
+    files: ['atlas/styled/**/*.js', 'atlas/latam-ui/**/*.js', 'atlas/managed/**/*.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        location: 'readonly',
+        history: 'readonly',
+        matchMedia: 'readonly',
+        innerWidth: 'readonly',
+        Blob: 'readonly',
+        Option: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        addEventListener: 'readonly',
+        localStorage: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['atlas/styled/local.js'],
+    languageOptions: { globals: { AtlasContext: 'readonly' } },
+  },
+  {
+    files: ['atlas/managed/worker.mjs', 'atlas/mcp/server.mjs'],
+    languageOptions: {
+      globals: {
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
+        TextDecoder: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['atlas/**/test.mjs', 'atlas/latam-ui/*-test.cjs', 'atlas/latam-ui/smoke.cjs'],
+    languageOptions: {
+      globals: {
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        fetch: 'readonly',
+        Blob: 'readonly',
+        CompressionStream: 'readonly',
+        AbortSignal: 'readonly',
+        setTimeout: 'readonly',
+      },
+    },
+  },
+  {
+    // These globals are evaluated by Playwright in the page, not by Node.
+    files: ['atlas/latam-ui/smoke.cjs'],
+    languageOptions: { globals: { document: 'readonly', innerWidth: 'readonly' } },
+  },
+
   // TypeScript files
   {
     files: ['**/*.ts', '**/*.tsx'],

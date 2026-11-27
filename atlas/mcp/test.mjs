@@ -51,7 +51,7 @@ assert.equal((await rpc('notifications/initialized',{}, {notification:true})).st
 assert.equal((await rpc('server/discover',{},{modern:true})).result.supportedVersions[0],'2026-07-28');
 assert.equal((await rpc('tools/list',{}, {modern:true})).result.resultType,'complete');
 const tools=(await rpc('tools/list')).result.tools;assert.equal(tools.length,8);assert.ok(tools.every(x=>x.annotations.readOnlyHint));
-const call=async (name,args={},modern=false)=>{const res=await rpc('tools/call',{name,arguments:args},{modern});assert.ok(res.result?.structuredContent,JSON.stringify(res));return res.result.structuredContent};
+const call=async (name,args={},modern=false)=>{const res=await rpc('tools/call',{name,arguments:args},{modern});assert.ok(res.result?.structuredContent,JSON.stringify(res));return res.result.structuredContent;};
 assert.equal((await call('list_coverage')).countries.length,23);
 assert.equal((await call('list_coverage',{region:'Central America'})).countries.length,7);
 assert.equal((await call('list_coverage',{region:'Caribbean'})).countries.length,3);
@@ -72,6 +72,6 @@ assert.ok((await call('atlas_methodology')).sources.length>4);
 assert.ok((await rpc('tools/call',{name:'country_context',arguments:{countries:['ARG'],extra:'x'}})).result.isError);
 assert.ok((await rpc('tools/call',{name:'argentina_2023_local',arguments:{province:'../../private'}})).result.isError);
 for(const u of ['/','/regional','/argentina','/local','/context','/south-america','/connect','/elections','/countries','/countries/arg','/countries/cub']){
- const r=await f(u);assert.equal(r.status,200,u);const html=await r.text();assert.match(html,/href="\/connect"/);if(u==='/'){assert.match(html,/The political geography of Latin America/);assert.match(html,/href="\/regional"/);} if(u==='/countries'){assert.match(html,/href="\/countries\/arg"/);assert.match(html,/href="\/countries\/cub"/);} if(u==='/elections'){assert.match(html,/<h1>Recent elections<\/h1>/);} if(u==='/connect'){assert.match(html,/Streamable HTTP/);assert.match(html,/https:\/\/atlas.blakeoxford.com\/mcp/);}
+ const r=await f(u);assert.equal(r.status,200,u);const html=await r.text();assert.match(html,/href="\/connect"/);if(u==='/'){assert.match(html,/The political geography of Latin America/);assert.match(html,/href="\/regional"/);} if(u==='/countries'){assert.match(html,/href="\/countries\/arg"/);assert.match(html,/href="\/countries\/cub"/);} if(u==='/elections'){assert.match(html,/<h1>Recent elections<\/h1>/);} if(u==='/connect'){assert.match(html,/Streamable HTTP/);assert.match(html,/https:\/\/atlas\.blakeoxford\.com\/mcp/);}
 }
 console.log('MCP transport, all 8 tools, input safety, and 11 Atlas paths passed',live?'(live)':http?'(local Cloudflare runtime)':'(legacy R2 fixture)');
