@@ -1,0 +1,12 @@
+<header><p class="eyebrow">Election Atlas · Developer access</p><h1>Connect your AI to the Atlas</h1><p class="sub">Ask about election results, voting blocs, or economic context and trace the answer back to the data.</p></header>
+<section class="panel" aria-labelledby="endpoint"><h2 id="endpoint">Remote MCP endpoint</h2><p><code>https://atlas.blakeoxford.com/mcp</code></p><p>In an MCP-capable client, add a remote server named <strong>Blake Oxford Election Atlas</strong>, choose <strong>Streamable HTTP</strong>, and paste the endpoint above. No Atlas API key or login is required. Your client must support public remote MCP servers; some plans or workspaces restrict adding them.</p>
+<details><summary>Example JSON configuration</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere"><code>{
+  "mcpServers": {
+    "blakeoxford-election-atlas": {
+      "type": "http",
+      "url": "https://atlas.blakeoxford.com/mcp"
+    }
+  }
+}</code></pre><p>Configuration fields vary by client. Use the URL directly if your client has an add-server screen.</p></details></section>
+<section class="panel" aria-labelledby="examples"><h2 id="examples">Questions to try</h2><ul><li>Where did Milei have his highest runoff vote share in 2023? Show both the share and the vote count.</li><li>Compare Mexico and the Dominican Republic’s 2024 presidential results, with the vote-share denominators and sources.</li><li>What were the top party tallies in an El Salvador constituency, and what does the coverage include?</li><li>Compare Argentina and Brazil’s 2023 GDP per person and sector mix. Cite the World Bank indicators.</li></ul></section>
+<section class="panel" aria-labelledby="data"><h2 id="data">What you can query</h2><p>Coverage spans 23 countries in South and Central America, Mexico, and the Latin Caribbean. Ask about national presidential rounds, historical ideological bloc trends, lower-house constituencies, Argentina’s 2023 province, section and circuit results, and economic, demographic, fiscal and geographic context where published. The tools return structured data with source links and notes.</p><p><strong>Read-only.</strong> The connector exposes existing public Atlas data and does not run a model on the site. It is a historical snapshot, not a live results feed. Coverage varies by place; constituencies are not street blocks, and census demographics do not tell us how particular groups voted.</p><p><a href="/">Explore the Atlas</a></p></section>
